@@ -1,0 +1,11 @@
+extends layout
+block content
+  article
+    h2 Legislatie
+    hr
+    h6 LEGISLATIE IN DOMENIU ACTUALIZATA PANA IN DATA 01.11.2012 (sursa: cadastruiasi.ro):
+    navi
+      each item in laws
+        li
+          a(href=item.link) #{item.name}
+
