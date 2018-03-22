@@ -7,7 +7,7 @@ var express = require('express')
   , routes = require('./routes')
   , http = require('http')
   , path = require('path')
-
+var ROOTPATH = __dirname;
 var app = express();
 app.use(express.compress());
 app.configure(function(){
@@ -33,7 +33,11 @@ app.get('/legislatie', routes.legislatie);
 app.get('/servicii', routes.servicii);
 app.get('/intrebari', routes.intrebari);
 //app.get('*', function(req,res){res.send("Page not found", 404)});
-
+app.get('*', function(req, res){
+    var filepath = path.join(ROOTPATH, req.path);
+    console.info("Sending", filepath, path.resolve(filepath));
+    res.sendFile(filepath);
+})
 
 
 http.createServer(app).listen(app.get('port'), function(){
