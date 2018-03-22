@@ -7,7 +7,9 @@ var express = require('express')
   , routes = require('./routes')
   , http = require('http')
   , path = require('path')
-var ROOTPATH = __dirname;
+  , fs = require('fs')
+
+var ROOTPATH = __dirname + "/public/bootstrap";
 var app = express();
 app.use(express.compress());
 app.configure(function(){
@@ -33,10 +35,22 @@ app.get('/legislatie', routes.legislatie);
 app.get('/servicii', routes.servicii);
 app.get('/intrebari', routes.intrebari);
 //app.get('*', function(req,res){res.send("Page not found", 404)});
-app.get('*', function(req, res){
-    var filepath = path.join(ROOTPATH, req.path);
-    console.info("Sending", filepath, path.resolve(filepath));
-    res.sendFile(filepath);
+app.get('/faststone/*', function(req, response){
+    var filePath = path.join(ROOTPATH, req.path);
+    console.info("Sending", filePath, path.resolve(filePath));
+    fs.exists(filePath, function(exists){
+      if (exists) {     
+        // Content-type is very interesting part that guarantee that
+        // Web browser will handle response in an appropriate manner.
+        response.writeHead(200, {
+          "Content-Type": "application/octet-stream"
+        });
+        fs.createReadStream(filePath).pipe(response);
+      } else {
+        response.writeHead(400, {"Content-Type": "text/plain"});
+        response.end("ERROR File does not exist");
+      }
+    });
 })
 
 
